@@ -1,12 +1,11 @@
 allprojects {
     group = "dev.hikari"
     version = "1.0.0"
-    description = "TODO"
+    description = "A simple tool to transform pdf file to png file."
 
     repositories {
         google()
         mavenCentral()
         gradlePluginPortal()
-        maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
     }
 }

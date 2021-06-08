@@ -39,6 +39,7 @@ fun TransformerMainPage() {
             onClick = {
                 isHandling = true
                 kotlin.runCatching {
+                    require(path.trim().isNotEmpty()) { "Path can not be empty!" }
                     if (option == OutputOption.OnePicPerPage) {
                         PDFTransformer.pdfToPng(
                             pdfFile = File(path),

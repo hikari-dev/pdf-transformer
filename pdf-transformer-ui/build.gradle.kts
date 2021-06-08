@@ -7,6 +7,10 @@ plugins {
     id("org.jetbrains.compose") version Versions.compose
 }
 
+repositories {
+    maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
+}
+
 dependencies {
     implementation(compose.desktop.currentOs)
     implementation(project(":pdf-transformer-core"))
