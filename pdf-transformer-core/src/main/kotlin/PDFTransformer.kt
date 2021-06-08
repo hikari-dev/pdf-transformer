@@ -13,14 +13,14 @@ object PDFTransformer {
      * Convert pdf to pngs per page
      */
     fun pdfToPng(
-        pdfFile: File
+        pdfFile: File,
+        startPageNumber: Int = 1,
+        endPageNumber: Int = Int.MAX_VALUE
     ) {
-        require(pdfFile.isFile) {
-            "${pdfFile.absolutePath} is not an valid file!"
-        }
+        checkParamsValid(pdfFile, startPageNumber, endPageNumber)
         val pdfDocument = Loader.loadPDF(pdfFile)
         val pdfRenderer = PDFRenderer(pdfDocument)
-        for (i in 0 until pdfDocument.numberOfPages) {
+        for (i in (startPageNumber - 1) until min(endPageNumber, pdfDocument.numberOfPages)) {
             val bufferedImage = pdfRenderer.renderImageWithDPI(i, 300f, ImageType.RGB)
             ImageIOUtil.writeImage(bufferedImage, "${pdfFile.nameWithoutExtension}-${i + 1}.png", 300)
         }
@@ -36,12 +36,7 @@ object PDFTransformer {
         endPageNumber: Int = Int.MAX_VALUE,
         outputFileName: String? = null
     ) {
-        require(pdfFile.isFile) {
-            "${pdfFile.absolutePath} is not an valid file!"
-        }
-        require(startPageNumber >= 1 && endPageNumber >= startPageNumber - 1) {
-            "starPageNumber must >=1 and endPageNumber must >= startPageNumber!"
-        }
+        checkParamsValid(pdfFile, startPageNumber, endPageNumber)
         val pdfDocument = Loader.loadPDF(pdfFile)
         val pdfRenderer = PDFRenderer(pdfDocument)
         var finalImageBuffer: BufferedImage? = null
