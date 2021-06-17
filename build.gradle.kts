@@ -1,3 +1,7 @@
+plugins {
+    kotlin("jvm") version Versions.kotlin apply false
+}
+
 allprojects {
     group = "dev.hikari"
     version = "1.0.0"

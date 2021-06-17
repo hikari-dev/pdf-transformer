@@ -9,6 +9,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import util.OutputOption
+import util.toPageNumber
 import java.io.File
 
 @Composable
@@ -39,7 +41,7 @@ fun TransformerMainPage() {
             onClick = {
                 isHandling = true
                 kotlin.runCatching {
-                    require(path.trim().isNotEmpty()) { "Path can not be empty!" }
+                    require(path.trim().isNotEmpty()) { "文件路径不能为空!" }
                     if (option == OutputOption.OnePicPerPage) {
                         PDFTransformer.pdfToPng(
                             pdfFile = File(path),
@@ -54,7 +56,7 @@ fun TransformerMainPage() {
                         )
                     }
                     isSuccess = true
-                    resultMsg = "Success!"
+                    resultMsg = "生产成功!"
                 }.getOrElse {
                     isSuccess = false
                     resultMsg = it.message!!
