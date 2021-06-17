@@ -1,3 +1,4 @@
+import androidx.compose.desktop.AppManager
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,6 +12,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import util.OutputOption
 import util.toPageNumber
+import java.awt.datatransfer.DataFlavor
+import java.awt.dnd.DnDConstants
+import java.awt.dnd.DropTarget
+import java.awt.dnd.DropTargetDropEvent
 import java.io.File
 
 @Composable
@@ -23,11 +28,12 @@ fun TransformerMainPage() {
     ) {
         var path by remember { mutableStateOf("") }
         var option by remember { mutableStateOf(OutputOption.OnePicPerPage) }
-        var startPageNumber by remember { mutableStateOf("") }
-        var endPageNumber by remember { mutableStateOf("") }
+        var startPageNumber by remember { mutableStateOf("1") }
+        var endPageNumber by remember { mutableStateOf("1") }
         var isHandling by remember { mutableStateOf(false) }
         var resultMsg by remember { mutableStateOf("") }
         var isSuccess by remember { mutableStateOf(true) }
+
         PathInputTextField(path) { path = it }
         OutputMethodSelect { option = it }
         StartEndSelect(
@@ -45,18 +51,18 @@ fun TransformerMainPage() {
                     if (option == OutputOption.OnePicPerPage) {
                         PDFTransformer.pdfToPng(
                             pdfFile = File(path),
-                            startPageNumber = startPageNumber.toPageNumber() ?: 0,
+                            startPageNumber = startPageNumber.toPageNumber() ?: 1,
                             endPageNumber = endPageNumber.toPageNumber() ?: Int.MAX_VALUE
                         )
                     } else if (option == OutputOption.SinglePic) {
                         PDFTransformer.pdfToSinglePng(
                             pdfFile = File(path),
-                            startPageNumber = startPageNumber.toPageNumber() ?: 0,
+                            startPageNumber = startPageNumber.toPageNumber() ?: 1,
                             endPageNumber = endPageNumber.toPageNumber() ?: Int.MAX_VALUE
                         )
                     }
                     isSuccess = true
-                    resultMsg = "生产成功!"
+                    resultMsg = "Success!"
                 }.getOrElse {
                     isSuccess = false
                     resultMsg = it.message!!
@@ -69,7 +75,6 @@ fun TransformerMainPage() {
         }
         if (resultMsg.isNotEmpty()) {
             Text(
-//                modifier = Modifier.padding(8.dp),
                 text = resultMsg,
                 color = if (isSuccess) {
                     Color.Green
@@ -78,6 +83,14 @@ fun TransformerMainPage() {
                 }
             )
         }
+        val target = object : DropTarget() {
+            override fun drop(evt: DropTargetDropEvent) {
+                evt.acceptDrop(DnDConstants.ACTION_REFERENCE)
+                val dropFiles = evt.transferable.getTransferData(DataFlavor.javaFileListFlavor) as List<*>
+                dropFiles.first()?.let { path = (it as File).absolutePath }
+            }
+        }
+        AppManager.windows.first().window.contentPane.dropTarget = target
     }
 }
 
