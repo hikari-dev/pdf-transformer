@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm")
-    id("org.jetbrains.compose") version Versions.compose
+    id("org.jetbrains.compose") version 1.2.1
 }
 
 repositories {
